@@ -15,59 +15,66 @@ int CS_pin = 9;
 int CLK_pin = 10;
 int DIO_pin = 11;
 
-int ledFlight = 6;
+int ledHover = 6;
 int ledMax = 7;
 
-// Could be controlled by a joystick (currently uses cordinates on boot)
-int joyX = 0;
-int joyY = 0;
+int defaultX = 0;
+int defaultY = 0;
 
 int aX  = 0;
 int aY  = 0;
 int aZ  = 0;
 
+int joyPin1 = 0;
+int joyPin2 = 1;
+
 // Game Settings
 int screenHeight = 14;
 int screenWidth = 40;
-int gameX = 0;
-int gameY = screenHeight - 2;
-String flightStatus = "Ready";
+int posX = 0;
+int posY = screenHeight - 2;
+String flightStatus = "o";
 String drone = "o-o";
+bool hoverOn = 0;
+
+int lineLength = 0;
+int joyX = 0; 
+int joyY = 0; 
 
 
 // Game code
 void flyUp(){
-  gameY=gameY-1;
-  flightStatus="Flying ^";
-  if(gameY <= 2){
-    gameY = 2;
+  posY=posY-1;
+  flightStatus="^";
+  if(posY <= 2){
+    posY = 2;
     digitalWrite(ledMax, HIGH);
-    flightStatus="Flying MAX";
+    flightStatus="MAX";
   }
 }
 
 void flyDown(){
-  gameY=gameY+1;
-  flightStatus="Flying v";
-  if(gameY >= screenHeight-2){
-    gameY = screenHeight-2;
-    flightStatus="Landed";
+  posY=posY+1;
+  flightStatus="v";
+  if(posY >= screenHeight-2){
+    posY = screenHeight-2;
+    flightStatus="o";
   }
 }
 
 
 void flyLeft(){
-  gameX=gameX-2;
-  flightStatus="Flying <";
-  if(gameX < 1){
-    gameX = 1;
+  posX=posX-2;
+  flightStatus="<";
+  if(posX < 1){
+    posX = 1;
   }
 }
 void flyRight(){
-  gameX=gameX+2;
-  flightStatus="Flying >";
-  if(gameX > screenWidth-1){
-    gameX = screenWidth-1;
+  posX=posX+2;
+  flightStatus=">";
+  if(posX > screenWidth-1){
+    posX = screenWidth-1;
   }
 }
 
@@ -81,15 +88,24 @@ void drawScreen(){
       Serial.println("");
     }else if(i==1){ // Draw statusbar
       Serial.print("Height: ");
-      Serial.print(screenHeight-gameY-2);
-      Serial.print("0 meters | Status: ");
+      Serial.print(screenHeight-posY-2);
+      Serial.print("0 m | Status: ");
       Serial.print(flightStatus);
+      Serial.print(" | Line: ");
+      Serial.print(lineLength);
+      Serial.print(" | Hover: ");
+      Serial.print(hoverOn);
       Serial.println("");
-    }else if(i==gameY){ // Draw the drone
-      for(int j=0; j < gameX; j++){
+    }else if(i==posY){ // Draw the drone
+      for(int j=0; j < posX; j++){
         Serial.print(" ");
       }
       Serial.println(drone);
+    }else if((i > posY) && i < (posY + lineLength + 1)){
+      for(int j=0; j < posX; j++){
+        Serial.print(" ");
+      }
+      Serial.println(" |");
     }
     else{
       Serial.println("");
@@ -107,9 +123,22 @@ void introDraw(){
       Serial.println("*");
     }
     Serial.println("Please change window height to this");
-    delay(7500);
+    delay(700);
 }
 
+void lineUp(){
+    lineLength = lineLength - 1;
+    if(lineLength < 0){
+      lineLength = 0;
+    }
+}
+
+void lineDown(){
+    lineLength = lineLength + 1;
+    if(lineLength > (screenHeight - 3)){
+        lineLength = screenHeight - 3;
+    }
+}
 
 // Axis Accelerometer
 void StartBit() {
@@ -190,7 +219,7 @@ void setup() {
   pinMode(CS_pin, OUTPUT);
   pinMode(CLK_pin, OUTPUT);
   pinMode(DIO_pin, OUTPUT);
-  pinMode(ledFlight, OUTPUT);
+  pinMode(ledHover, OUTPUT);
   pinMode(ledMax, OUTPUT);
   // initialize device & reset
   digitalWrite(CS_pin,LOW);
@@ -203,9 +232,9 @@ void setup() {
   aY = GetValue(B1001);
   aZ = GetValue(B1010);
 
-  //Set default position (could be controlled by a joystick)
-  joyY = aY;
-  joyX = aX;
+  // Calibrate default
+  defaultY = aY;
+  defaultX = aX;
   introDraw();
 }
 
@@ -215,26 +244,46 @@ void loop() {
   aY = GetValue(B1001);
   aZ = GetValue(B1010);
 
-  if((aY-joyY)>10){
+  
+  joyY = analogRead(joyPin1);
+  delayMicroseconds(10);
+  joyX = analogRead(joyPin2);
+
+  if((aY-defaultY)>10 && !hoverOn){
     flyUp();
   }
-  if((aY-joyY)<-10){
+  if((aY-defaultY)<-10 && !hoverOn){
     flyDown();  
   }
 
-  if(0 < screenHeight-gameY-2){ // are we flying?
-    digitalWrite(ledFlight, HIGH);
+  if(joyY > 1023*0.6){
+    lineUp();
+  }
+  if(joyY < 1023*0.4){
+    lineDown();
+  }
+
+  if(0 < screenHeight-posY-2){ // are we flying?
     
-    if((aX-joyX)>10){
+    if(joyX > 1023*0.6){
+        digitalWrite(ledHover, HIGH);
+        hoverOn = 1;
+    }
+    if(joyX < 1023*0.4){
+        digitalWrite(ledHover, LOW);
+        hoverOn = 0;
+    }
+    
+    if((aX-defaultX)>10){
       flyLeft();
     }
-    if((aX-joyX)<-10){
+    if((aX-defaultX)<-10){
       flyRight();  
     }
   }
 
   drawScreen();
-  digitalWrite(ledFlight, LOW);
+
   digitalWrite(ledMax, LOW);
 }
 
