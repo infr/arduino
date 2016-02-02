@@ -1,5 +1,5 @@
-/*
-//////////////////////////////////
+
+/*//////////////////////////////////
 
 QUAD COPTER SIMULATOR
 2016 Kim Salmi
@@ -9,8 +9,7 @@ Creative Commons Attribution ShareAlike 3.0.
 Orginal Axis Accelerometer code
 AUTHOR:   kiilo kiilo@kiilo.org
 License:  http://creativecommons.org/licenses/by-nc-sa/2.5/ch/
-/////////////////////////////////
-*/
+/////////////////////////////////*/
 
 int CS_pin = 9;
 int CLK_pin = 10;
@@ -74,9 +73,9 @@ void flyRight(){
 
 void drawScreen(){
   Serial.println("");
-  for(int i=0; i<screenHeight;i++){
+  for(int i=0; i < screenHeight;i++){
     if(i==(screenHeight-1)){ // Draw the floor
-      for(int a=0; a<screenWidth; a++){
+      for(int a=0; a < screenWidth; a++){
         Serial.print("-");
       }
       Serial.println("");
@@ -87,7 +86,7 @@ void drawScreen(){
       Serial.print(flightStatus);
       Serial.println("");
     }else if(i==gameY){ // Draw the drone
-      for(int j=0; j<gameX; j++){
+      for(int j=0; j < gameX; j++){
         Serial.print(" ");
       }
       Serial.println(drone);
@@ -96,7 +95,7 @@ void drawScreen(){
       Serial.println("");
     }
   }
-  delay(400);
+  delay(200);
 }
 
 void introDraw(){
@@ -187,7 +186,7 @@ int GetValue(byte Command) { // x = B1000, y = B1001, z = B1010
 
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(CS_pin, OUTPUT);
   pinMode(CLK_pin, OUTPUT);
   pinMode(DIO_pin, OUTPUT);
@@ -223,7 +222,7 @@ void loop() {
     flyDown();  
   }
 
-  if(0<screenHeight-gameY-2){ // are we flying?
+  if(0 < screenHeight-gameY-2){ // are we flying?
     digitalWrite(ledFlight, HIGH);
     
     if((aX-joyX)>10){
@@ -238,5 +237,4 @@ void loop() {
   digitalWrite(ledFlight, LOW);
   digitalWrite(ledMax, LOW);
 }
-
 
