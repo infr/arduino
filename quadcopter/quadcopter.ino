@@ -25,8 +25,8 @@ int aX  = 0;
 int aY  = 0;
 int aZ  = 0;
 
-int joyPin1 = 0;
-int joyPin2 = 1;
+int joyPinY = 0;
+int joyPinX = 1;
 
 // Game Settings
 int screenHeight = 14;
@@ -36,10 +36,11 @@ int posY = screenHeight - 2;
 String flightStatus = "o";
 String drone = "o-o";
 bool hoverOn = 0;
+int updateSpeed = 200;
 
 int lineLength = 0;
 int joyX = 0; 
-int joyY = 0; 
+int joyY = 0;
 
 
 // Game code
@@ -111,7 +112,7 @@ void drawScreen(){
       Serial.println("");
     }
   }
-  delay(200);
+  delay(updateSpeed);
 }
 
 void introDraw(){
@@ -123,7 +124,7 @@ void introDraw(){
       Serial.println("*");
     }
     Serial.println("Please change window height to this");
-    delay(700);
+    delay(3000);
 }
 
 void lineUp(){
@@ -245,9 +246,9 @@ void loop() {
   aZ = GetValue(B1010);
 
   
-  joyY = analogRead(joyPin1);
+  joyY = analogRead(joyPinY);
   delayMicroseconds(10);
-  joyX = analogRead(joyPin2);
+  joyX = analogRead(joyPinX);
 
   if((aY-defaultY)>10 && !hoverOn){
     flyUp();
@@ -256,20 +257,20 @@ void loop() {
     flyDown();  
   }
 
-  if(joyY > 1023*0.6){
+  if(joyX > 1023*0.6){
     lineUp();
   }
-  if(joyY < 1023*0.4){
+  if(joyX < 1023*0.4){
     lineDown();
   }
 
   if(0 < screenHeight-posY-2){ // are we flying?
     
-    if(joyX > 1023*0.6){
+    if(joyY > 1023*0.6){
         digitalWrite(ledHover, HIGH);
         hoverOn = 1;
     }
-    if(joyX < 1023*0.4){
+    if(joyY < 1023*0.4){
         digitalWrite(ledHover, LOW);
         hoverOn = 0;
     }
@@ -279,6 +280,17 @@ void loop() {
     }
     if((aX-defaultX)<-10){
       flyRight();  
+    }
+  }else{
+    if(joyY > 1023*0.6){
+        drone = "X-----X";
+        updateSpeed = 400;
+        screenWidth = 75;
+    }
+    if(joyY < 1023*0.4){
+        drone = "<><>";
+        updateSpeed = 100;
+        screenWidth = 75;
     }
   }
 
