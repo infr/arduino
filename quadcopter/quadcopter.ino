@@ -1,4 +1,3 @@
-
 /*//////////////////////////////////
 QUAD COPTER SIMULATOR
 AUTHOR:   Kim Salmi infr[at]iki.fi
