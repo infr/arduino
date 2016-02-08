@@ -8,6 +8,8 @@
  * License:  http://creativecommons.org/licenses/by-nc-sa/2.5/ch/
 */
 
+#include <math.h> // just so that the syntax hilight work...... :D
+
 int CS_pin = 9;
 int CLK_pin = 10;
 int DIO_pin = 11;
