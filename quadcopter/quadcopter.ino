@@ -1,12 +1,12 @@
-/*//////////////////////////////////
-QUAD COPTER SIMULATOR
-AUTHOR:   Kim Salmi infr[at]iki.fi
-License:  http://creativecommons.org/licenses/by-nc-sa/2.5/ch/
-/////////////////////////////////
-Orginal Axis Accelerometer code
-AUTHOR:   kiilo kiilo@kiilo.org
-License:  http://creativecommons.org/licenses/by-nc-sa/2.5/ch/
-/////////////////////////////////*/
+/*
+ * QUAD COPTER SIMULATOR
+ * AUTHOR:   Kim Salmi infr[at]iki.fi
+ * License:  http://creativecommons.org/licenses/by-nc-sa/2.5/ch/
+ *
+ * Orginal Axis Accelerometer code
+ * AUTHOR:   kiilo kiilo@kiilo.org
+ * License:  http://creativecommons.org/licenses/by-nc-sa/2.5/ch/
+*/
 
 int CS_pin = 9;
 int CLK_pin = 10;
