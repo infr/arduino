@@ -6,7 +6,7 @@
 ---
 
 * [Landis Gyr electric meter project](landis_gyr)
-  * [More info](http://tunn.us/arduino/landisgyr.php)
+  * [More info](http://tunn.us/arduino/landisgyr.html)
 
 ---
 
